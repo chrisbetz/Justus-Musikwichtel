@@ -1,0 +1,8 @@
+{:http {:port #or [#env PORT 8080]
+        :host #or [#env HOST "0.0.0.0"]}
+
+ :storage {:backend #or [#env DB_BACKEND :sqlite] ;; :sqlite or :datalevin
+           :garden-storage #or [#env GARDEN_STORAGE "./dev-storage"]
+           :sqlite-path "./dev-storage/wichtel.sqlite"}
+
+ :app {:game-id "default-duell"}}

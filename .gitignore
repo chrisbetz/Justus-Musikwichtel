@@ -1,0 +1,28 @@
+# Clojure & Shadow-cljs
+.cpcache/
+.shadow-cljs/
+target/
+classes/
+*.jar
+
+# Node
+node_modules/
+package-lock.json
+
+# Local storage and databases
+dev-storage/
+*.sqlite
+*.sqlite3
+*.db
+
+# OS & Editor
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Secrets & Local credentials
+*.edn.local
+.secrets/
+secrets/
