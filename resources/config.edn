@@ -1,4 +1,4 @@
-{:http {:port #or [#env PORT 8080]
+{:http {:port #or [#env PORT 7777]
         :host #or [#env HOST "0.0.0.0"]}
 
  :storage {:backend #or [#env DB_BACKEND :sqlite] ;; :sqlite or :datalevin
