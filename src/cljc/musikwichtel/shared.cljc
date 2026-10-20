@@ -33,23 +33,37 @@
 (defn determine-leader
   "Returns leader map comparing player1 and player2 ms.
    :leader is :player1, :player2, or :tie.
+   :nice-player is the player with more practice time (or nil if tie).
+   :naughty-player is the player with less practice time (or nil if tie).
    :angle-deg ranges from -45 (p1 leading) to +45 (p2 leading), 0 for tie."
   [p1-ms p2-ms]
-  (let [diff (- p2-ms p1-ms)]
+  (let [diff (- (or p2-ms 0) (or p1-ms 0))]
     (cond
       (= diff 0)
-      {:leader :tie :diff-ms 0 :angle-deg 0}
+      {:leader :tie
+       :nice-player nil
+       :naughty-player nil
+       :diff-ms 0
+       :diff-formatted "00:00:00"
+       :angle-deg 0}
 
       (> diff 0)
-      ;; Player 2 has practiced more (p2 is on Nice side, p1 on Naughty side)
+      ;; Player 2 (Klavier) has practiced more
       (let [capped (min 1.0 (/ diff 1800000.0))] ;; max deflection at 30 min diff
         {:leader :player2
+         :nice-player :player2
+         :naughty-player :player1
          :diff-ms diff
+         :diff-formatted (format-time-ms diff)
          :angle-deg (* capped 45.0)})
 
       :else
-      ;; Player 1 has practiced more
-      (let [capped (min 1.0 (/ (- diff) 1800000.0))]
+      ;; Player 1 (Oboe) has practiced more
+      (let [abs-diff (- diff)
+            capped (min 1.0 (/ abs-diff 1800000.0))]
         {:leader :player1
-         :diff-ms (- diff)
+         :nice-player :player1
+         :naughty-player :player2
+         :diff-ms abs-diff
+         :diff-formatted (format-time-ms abs-diff)
          :angle-deg (* capped -45.0)}))))

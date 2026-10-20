@@ -5,6 +5,7 @@
 :root {
   --font-main: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-serif: 'Cinzel', serif;
+  --font-christmas: 'Mountains of Christmas', cursive, serif;
   --font-digits: 'JetBrains Mono', monospace;
 
   /* Color Palette */
@@ -13,29 +14,29 @@
   --cream: #fbf7ee;
   --cream-dim: rgba(251, 247, 238, 0.7);
   --gold: #f3c969;
-  --gold-glow: rgba(243, 201, 105, 0.4);
+  --gold-glow: rgba(243, 201, 105, 0.45);
   --wood-brown: #5c3821;
   --gingerbread: #8b5329;
 
   /* Player 1: Oboe (Christmas Evergreen) */
-  --p1-green-dark: #143628;
-  --p1-green: #1e523d;
-  --p1-green-light: #2d7a5b;
-  --p1-green-glow: rgba(45, 122, 91, 0.45);
+  --p1-green-dark: #123325;
+  --p1-green: #1c523c;
+  --p1-green-light: #2c7a59;
+  --p1-green-glow: rgba(44, 122, 89, 0.5);
 
   /* Player 2: Klavier (Festive Berry Red) */
-  --p2-red-dark: #470d1e;
-  --p2-red: #801835;
-  --p2-red-light: #b0234a;
-  --p2-red-glow: rgba(176, 35, 74, 0.45);
+  --p2-red-dark: #450c1c;
+  --p2-red: #801633;
+  --p2-red-light: #b32148;
+  --p2-red-glow: rgba(179, 33, 72, 0.5);
 
   /* Gauges & Accents */
   --naughty-color: #d94e34;
   --nice-color: #3bb273;
 
   /* Shadows */
-  --card-shadow: 0 14px 35px rgba(0, 0, 0, 0.45), 0 4px 10px rgba(0, 0, 0, 0.3);
-  --emboss-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.2), inset 0 -2px 4px rgba(0, 0, 0, 0.4);
+  --card-shadow: 0 16px 38px rgba(0, 0, 0, 0.55), 0 4px 12px rgba(0, 0, 0, 0.35);
+  --emboss-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.22), inset 0 -2px 4px rgba(0, 0, 0, 0.45);
 }
 
 * {
@@ -74,12 +75,12 @@ html, body {
   flex-direction: column;
   width: 100%;
   height: 100%;
-  padding: env(safe-area-inset-top, 12px) env(safe-area-inset-right, 20px) env(safe-area-inset-bottom, 10px) env(safe-area-inset-left, 20px);
+  padding: env(safe-area-inset-top, 6px) env(safe-area-inset-right, 20px) env(safe-area-inset-bottom, 10px) env(safe-area-inset-left, 20px);
   position: relative;
   overflow: hidden;
 }
 
-/* Subtle Starry Winter Night Background */
+/* Starry Winter Night Background */
 .app-stars-bg {
   position: absolute;
   top: 0;
@@ -89,19 +90,97 @@ html, body {
   pointer-events: none;
   background-image: radial-gradient(1.5px 1.5px at 15% 18%, #ffffff, transparent),
                     radial-gradient(1px 1px at 45% 12%, rgba(255, 255, 255, 0.8), transparent),
-                    radial-gradient(2px 2px at 78% 22%, rgba(243, 201, 105, 0.9), transparent),
+                    radial-gradient(2.5px 2.5px at 78% 22%, rgba(243, 201, 105, 0.95), transparent),
                     radial-gradient(1.5px 1.5px at 88% 8%, rgba(255, 255, 255, 0.7), transparent),
-                    radial-gradient(1px 1px at 30% 28%, rgba(255, 255, 255, 0.6), transparent);
-  opacity: 0.8;
+                    radial-gradient(1.2px 1.2px at 30% 28%, rgba(255, 255, 255, 0.6), transparent),
+                    radial-gradient(2px 2px at 60% 35%, rgba(243, 201, 105, 0.8), transparent);
+  opacity: 0.85;
   z-index: 0;
 }
 
-/* Header Bar */
+/* ==========================================================================
+   Festive Christmas Fairy Lights Garland
+   ========================================================================== */
+
+.fairy-garland {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
+  width: calc(100% - 24px);
+  margin: 0 auto 4px auto;
+  height: 18px;
+  position: relative;
+  z-index: 15;
+  border-bottom: 2px solid #1e3d2b;
+}
+
+.garland-bulb {
+  width: 10px;
+  height: 14px;
+  border-radius: 50% 50% 45% 45%;
+  position: relative;
+  top: 4px;
+  transform-origin: top center;
+}
+
+.garland-bulb::before {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: 2.5px;
+  width: 5px;
+  height: 4px;
+  background: #2a3a2e;
+  border-radius: 1px;
+}
+
+.light--red {
+  background: #ff2a44;
+  box-shadow: 0 0 8px #ff2a44, 0 0 16px rgba(255, 42, 68, 0.8);
+  animation: bulb-twinkle-red 2.4s infinite ease-in-out;
+}
+.light--gold {
+  background: #ffd166;
+  box-shadow: 0 0 8px #ffd166, 0 0 16px rgba(255, 209, 102, 0.8);
+  animation: bulb-twinkle-gold 2.1s infinite ease-in-out 0.4s;
+}
+.light--green {
+  background: #2ec4b6;
+  box-shadow: 0 0 8px #2ec4b6, 0 0 16px rgba(46, 196, 182, 0.8);
+  animation: bulb-twinkle-green 2.7s infinite ease-in-out 0.8s;
+}
+.light--blue {
+  background: #3a86ff;
+  box-shadow: 0 0 8px #3a86ff, 0 0 16px rgba(58, 134, 255, 0.8);
+  animation: bulb-twinkle-blue 2.3s infinite ease-in-out 1.2s;
+}
+
+@keyframes bulb-twinkle-red {
+  0%, 100% { opacity: 0.95; filter: drop-shadow(0 0 8px #ff2a44); }
+  50% { opacity: 0.35; filter: drop-shadow(0 0 2px #ff2a44); }
+}
+@keyframes bulb-twinkle-gold {
+  0%, 100% { opacity: 0.95; filter: drop-shadow(0 0 8px #ffd166); }
+  50% { opacity: 0.35; filter: drop-shadow(0 0 2px #ffd166); }
+}
+@keyframes bulb-twinkle-green {
+  0%, 100% { opacity: 0.95; filter: drop-shadow(0 0 8px #2ec4b6); }
+  50% { opacity: 0.35; filter: drop-shadow(0 0 2px #2ec4b6); }
+}
+@keyframes bulb-twinkle-blue {
+  0%, 100% { opacity: 0.95; filter: drop-shadow(0 0 8px #3a86ff); }
+  50% { opacity: 0.35; filter: drop-shadow(0 0 2px #3a86ff); }
+}
+
+/* ==========================================================================
+   Header Bar
+   ========================================================================== */
+
 .app-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 44px;
+  height: 48px;
   width: 100%;
   padding: 0 12px;
   z-index: 10;
@@ -111,19 +190,102 @@ html, body {
 .app-title-badge {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+}
+
+.title-icon {
+  font-size: 1.8rem;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.5));
+}
+
+.title-text-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.title-main {
   font-family: var(--font-serif);
-  font-size: 1.15rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
   color: var(--gold);
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+  line-height: 1.1;
+}
+
+.title-sub {
+  font-size: 0.7rem;
+  color: var(--cream-dim);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Current User Login Pill */
+.user-pill-container {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(14, 28, 22, 0.88);
+  padding: 4px 6px 4px 10px;
+  border-radius: 20px;
+  border: 1px solid rgba(243, 201, 105, 0.45);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.4);
+}
+
+.user-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+.user-pill--p1 { color: #a7f3d0; }
+.user-pill--p2 { color: #fecdd3; }
+.user-pill--both { color: #ffd166; }
+
+.pill-switch-btn {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: var(--cream);
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.pill-switch-btn:hover {
+  background: rgba(255, 255, 255, 0.28);
+  transform: scale(1.04);
+}
+
+.btn-header-login {
+  background: linear-gradient(180deg, #d90429 0%, #990000 100%);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), var(--emboss-shadow);
+  transition: all 0.2s ease;
+}
+.btn-header-login:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(217, 4, 41, 0.5);
 }
 
 .reset-icon-btn {
-  background: rgba(255, 255, 255, 0.07);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: var(--cream-dim);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(243, 201, 105, 0.3);
+  color: var(--gold);
   width: 36px;
   height: 36px;
   border-radius: 50%;
@@ -132,43 +294,92 @@ html, body {
   justify-content: center;
   cursor: pointer;
   transition: all 0.2s ease;
+  font-size: 1.1rem;
 }
-
 .reset-icon-btn:hover, .reset-icon-btn:active {
-  background: rgba(255, 255, 255, 0.18);
-  color: var(--gold);
+  background: rgba(243, 201, 105, 0.2);
   transform: rotate(90deg);
 }
 
-/* Arena: Dual Stopwatches & Gauge */
+/* ==========================================================================
+   Arena: Dual Stopwatches & Santa Gauge
+   ========================================================================== */
+
 .arena-row {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  gap: 20px;
+  gap: 18px;
   width: 100%;
   flex: 1 1 auto;
-  max-height: 48vh;
+  max-height: 46vh;
   z-index: 5;
-  padding: 0 10px;
+  padding: 4px 10px;
 }
 
 /* ==========================================================================
-   Festive Toy Stopwatch Card
+   Snow Caps on Cards, Gauge, and Modals
+   ========================================================================== */
+
+.card-snow-cap, .modal-snow-cap, .gauge-snow-cap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 12px;
+  background: #ffffff;
+  border-radius: 26px 26px 0 0;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2), inset 0 -2px 3px rgba(210, 230, 245, 0.85);
+  pointer-events: none;
+  z-index: 8;
+}
+
+.card-snow-cap::after, .gauge-snow-cap::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: radial-gradient(circle at 10px 0, #ffffff 5px, transparent 6px),
+              radial-gradient(circle at 35px 0, #ffffff 7px, transparent 8px),
+              radial-gradient(circle at 65px 0, #ffffff 4px, transparent 5px),
+              radial-gradient(circle at 95px 0, #ffffff 8px, transparent 9px),
+              radial-gradient(circle at 135px 0, #ffffff 6px, transparent 7px),
+              radial-gradient(circle at 175px 0, #ffffff 7px, transparent 8px),
+              radial-gradient(circle at 215px 0, #ffffff 5px, transparent 6px),
+              radial-gradient(circle at 255px 0, #ffffff 8px, transparent 9px),
+              radial-gradient(circle at 295px 0, #ffffff 6px, transparent 7px);
+  background-repeat: repeat-x;
+  background-size: 300px 6px;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.15));
+}
+
+.gauge-snow-cap {
+  top: -4px;
+  left: 6px;
+  right: 6px;
+  height: 10px;
+  border-radius: 100px 100px 0 0;
+  z-index: 12;
+}
+
+/* ==========================================================================
+   Festive Stopwatch Card
    ========================================================================== */
 
 .stopwatch-card {
   height: 100%;
-  max-height: 340px;
+  max-height: 330px;
   border-radius: 28px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 20px 24px;
+  padding: 16px 22px;
   position: relative;
   box-shadow: var(--card-shadow);
   border: 3px solid rgba(243, 201, 105, 0.35);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
   overflow: hidden;
 }
 
@@ -178,7 +389,7 @@ html, body {
   border-color: rgba(64, 185, 134, 0.4);
 }
 .stopwatch-card--p1.running {
-  box-shadow: 0 0 30px var(--p1-green-glow), var(--card-shadow);
+  box-shadow: 0 0 32px var(--p1-green-glow), var(--card-shadow);
   border-color: var(--gold);
 }
 
@@ -188,58 +399,122 @@ html, body {
   border-color: rgba(214, 56, 98, 0.4);
 }
 .stopwatch-card--p2.running {
-  box-shadow: 0 0 30px var(--p2-red-glow), var(--card-shadow);
+  box-shadow: 0 0 32px var(--p2-red-glow), var(--card-shadow);
   border-color: var(--gold);
 }
 
-/* Card Decorative Holly Garland */
-.stopwatch-card::before {
-  content: '✦';
-  position: absolute;
-  top: 12px;
-  right: 14px;
-  font-size: 14px;
-  color: var(--gold);
-  opacity: 0.6;
+.stopwatch-card.card--mine {
+  border-color: #ffd166;
+  box-shadow: 0 0 24px rgba(243, 201, 105, 0.35), var(--card-shadow);
 }
 
-/* Editable Player Name Badge */
+.stopwatch-card.card--other-player {
+  opacity: 0.85;
+}
+
+.card-holly-decor {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  font-size: 1.5rem;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+  z-index: 7;
+}
+
+.player-status-badge-row {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 4px;
+  position: relative;
+  z-index: 7;
+}
+
+.player-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 12px;
+  letter-spacing: 0.03em;
+}
+
+.badge--mine {
+  background: rgba(243, 201, 105, 0.25);
+  color: #ffd166;
+  border: 1px solid rgba(243, 201, 105, 0.5);
+  box-shadow: 0 0 10px rgba(243, 201, 105, 0.3);
+}
+
+.badge--login-prompt, .badge--switch-prompt {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--cream);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.badge--login-prompt:hover, .badge--switch-prompt:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: scale(1.05);
+}
+
+/* Player Name Row */
 .player-name-wrapper {
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-bottom: 6px;
+  position: relative;
+  z-index: 7;
+}
+
+.player-title-row {
+  display: flex;
+  align-items: center;
   gap: 8px;
-  margin-bottom: 8px;
+}
+
+.player-name-text {
+  color: var(--cream);
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+  cursor: pointer;
+  border-bottom: 2px dashed rgba(255, 255, 255, 0.25);
+  transition: border-color 0.2s;
+}
+.player-name-text:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.edit-hint-pencil {
+  font-size: 0.9rem;
+  opacity: 0.5;
+  cursor: pointer;
 }
 
 .player-name-input {
-  background: transparent;
-  border: none;
-  border-bottom: 2px dashed rgba(255, 255, 255, 0.25);
+  background: rgba(0, 0, 0, 0.35);
+  border: 2px solid var(--gold);
+  border-radius: 8px;
   color: var(--cream);
   font-family: var(--font-serif);
-  font-size: 1.6rem;
-  font-weight: 700;
+  font-size: 1.4rem;
+  font-weight: 800;
   text-align: center;
   padding: 2px 8px;
-  max-width: 200px;
   outline: none;
-  transition: border-color 0.2s;
 }
 
-.player-name-input:focus {
-  border-bottom: 2px solid var(--gold);
-  color: #ffffff;
-}
-
-/* Digital Time Display (Sitting Distance Legibility) */
+/* Big Wall-Clock Digital Box */
 .time-display-box {
   background: rgba(0, 0, 0, 0.45);
   border-radius: 18px;
-  padding: 14px 18px;
+  padding: 12px 14px;
   text-align: center;
-  box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -247,7 +522,7 @@ html, body {
 
 .time-digits {
   font-family: var(--font-digits);
-  font-size: 3.4rem;
+  font-size: 3.2rem;
   font-weight: 700;
   letter-spacing: 0.05em;
   color: #ffffff;
@@ -256,28 +531,28 @@ html, body {
 
 .stopwatch-card--p1.running .time-digits {
   color: #a7f3d0;
-  text-shadow: 0 0 18px rgba(110, 231, 183, 0.6);
+  text-shadow: 0 0 18px rgba(110, 231, 183, 0.65);
 }
 
 .stopwatch-card--p2.running .time-digits {
   color: #fecdd3;
-  text-shadow: 0 0 18px rgba(251, 113, 133, 0.6);
+  text-shadow: 0 0 18px rgba(251, 113, 133, 0.65);
 }
 
-/* Touch Button Controls */
+/* Touch Controls */
 .controls-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  margin-top: 14px;
+  gap: 14px;
+  margin-top: 10px;
 }
 
 .touch-btn {
-  height: 58px;
+  height: 54px;
   border-radius: 16px;
   border: none;
   font-family: var(--font-main);
-  font-size: 1.25rem;
+  font-size: 1.2rem;
   font-weight: 700;
   display: flex;
   align-items: center;
@@ -300,22 +575,24 @@ html, body {
   box-shadow: none;
 }
 
-/* Start Button */
+.btn-icon {
+  font-size: 1.1rem;
+}
+
 .btn-start {
-  background: linear-gradient(180deg, #38b000 0%, #007200 100%);
+  background: linear-gradient(180deg, #2d9348 0%, #15692f 100%);
   color: #ffffff;
   border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-/* Stop Button */
 .btn-stop {
-  background: linear-gradient(180deg, #e5383b 0%, #a4161a 100%);
+  background: linear-gradient(180deg, #d90429 0%, #990000 100%);
   color: #ffffff;
   border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 /* ==========================================================================
-   Naughty / Nice Balance Gauge
+   Santa's Naughty / Nice Gauge
    ========================================================================== */
 
 .gauge-wrapper {
@@ -323,98 +600,177 @@ html, body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 170px;
+  width: 200px;
   flex-shrink: 0;
   position: relative;
+  margin-top: 6px;
 }
 
 .gauge-dial {
-  width: 160px;
-  height: 100px;
-  background: rgba(18, 38, 30, 0.85);
-  border: 2px solid var(--gold);
-  border-top-left-radius: 90px;
-  border-top-right-radius: 90px;
+  width: 195px;
+  height: 115px;
+  background: radial-gradient(circle at 50% 100%, #1d120a 0%, #0f1c16 65%, #07120d 100%);
+  border: 3px solid #f3c969;
+  border-bottom: none;
+  border-top-left-radius: 105px;
+  border-top-right-radius: 105px;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5), inset 0 2px 6px rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), inset 0 3px 8px rgba(243, 201, 105, 0.35);
   display: flex;
   justify-content: center;
   align-items: flex-end;
 }
 
-/* Arc colors */
-.gauge-dial-background {
+.gauge-dial-title {
   position: absolute;
   top: 10px;
-  left: 10px;
-  right: 10px;
-  bottom: 0;
-  border-top-left-radius: 80px;
-  border-top-right-radius: 80px;
-  background: linear-gradient(90deg, var(--p1-green-light) 0%, #d4af37 50%, var(--p2-red-light) 100%);
-  opacity: 0.35;
-}
-
-/* Labels */
-.gauge-labels {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  padding: 0 14px;
-  position: absolute;
-  bottom: 8px;
   font-family: var(--font-serif);
-  font-size: 0.72rem;
+  font-size: 0.65rem;
+  letter-spacing: 0.18em;
   font-weight: 800;
-  letter-spacing: 0.04em;
+  color: #ffd166;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+  z-index: 5;
 }
 
-.gauge-label--left {
-  color: #a7f3d0;
+.gauge-dial-background {
+  position: absolute;
+  top: 24px;
+  left: 12px;
+  right: 12px;
+  bottom: 0;
+  border-top-left-radius: 85px;
+  border-top-right-radius: 85px;
+  background: linear-gradient(90deg, #991b1b 0%, #b45309 35%, #ca8a04 50%, #15803d 65%, #047857 100%);
+  opacity: 0.72;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.6);
 }
 
-.gauge-label--right {
-  color: #fecdd3;
-}
-
-/* Needle */
-.gauge-needle-pivot {
+.gauge-ticks {
   position: absolute;
   bottom: 0;
   left: 50%;
-  width: 14px;
-  height: 14px;
-  background: var(--gold);
-  border-radius: 50%;
-  transform: translate(-50%, 50%);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
-  z-index: 10;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.gauge-tick {
+  position: absolute;
+  bottom: 0;
+  left: -1px;
+  width: 2px;
+  height: 76px;
+  transform-origin: bottom center;
+  background: linear-gradient(180deg, #ffffff 0%, #ffffff 8px, transparent 9px);
+  z-index: 4;
+}
+.gauge-tick.tick--center {
+  width: 3px;
+  background: linear-gradient(180deg, #ffd166 0%, #ffd166 12px, transparent 13px);
+}
+
+.gauge-labels {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  width: 100%;
+  padding: 0 12px;
+  position: absolute;
+  bottom: 10px;
+  z-index: 6;
+  font-family: var(--font-serif);
+  font-weight: 800;
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+}
+
+.gauge-label--naughty {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  color: #fecdd3;
+  text-shadow: 0 0 8px rgba(225, 29, 72, 0.8), 0 1px 3px #000;
+}
+.gauge-label--center {
+  font-size: 0.85rem;
+  color: #ffd166;
+}
+.gauge-label--nice {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  color: #a7f3d0;
+  text-shadow: 0 0 8px rgba(16, 185, 129, 0.8), 0 1px 3px #000;
 }
 
 .gauge-needle {
   position: absolute;
   bottom: 0;
   left: 50%;
-  width: 3px;
-  height: 68px;
-  background: linear-gradient(180deg, #ffeedd 0%, var(--gold) 100%);
+  width: 3.5px;
+  height: 74px;
+  background: linear-gradient(180deg, #ffffff 0%, #f3c969 60%, #b45309 100%);
   transform-origin: bottom center;
   transform: translateX(-50%) rotate(0deg);
-  border-radius: 3px;
-  box-shadow: 0 0 6px rgba(0, 0, 0, 0.7);
-  transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border-radius: 4px;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.6), 0 2px 6px rgba(0, 0, 0, 0.8);
+  transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
   z-index: 9;
 }
+.gauge-needle::before {
+  content: '★';
+  position: absolute;
+  top: -11px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 11px;
+  color: #fff;
+  text-shadow: 0 0 6px #ffd166;
+}
 
-.gauge-status-text {
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: var(--gold);
-  margin-top: 6px;
+.gauge-needle-pivot {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 16px;
+  height: 16px;
+  background: radial-gradient(circle at 35% 35%, #fff 0%, #ffd166 40%, #854d0e 100%);
+  border: 2px solid #582f0e;
+  border-radius: 50%;
+  transform: translate(-50%, 50%);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+  z-index: 10;
+}
+
+.gauge-status-box {
+  margin-top: 8px;
+  padding: 6px 12px;
+  background: rgba(14, 28, 22, 0.92);
+  border: 1px solid rgba(243, 201, 105, 0.4);
+  border-radius: 14px;
   text-align: center;
-  min-height: 20px;
-  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-height: 44px;
+  justify-content: center;
+  width: 100%;
+}
+
+.status-main {
+  font-family: var(--font-serif);
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #ffd166;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
+}
+
+.status-sub {
+  font-size: 0.7rem;
+  color: var(--cream-dim);
 }
 
 /* ==========================================================================
@@ -423,11 +779,11 @@ html, body {
 
 .village-container {
   width: 100%;
-  height: 40vh;
-  min-height: 220px;
+  height: 38vh;
+  min-height: 200px;
   position: relative;
   overflow: hidden;
-  margin-top: 8px;
+  margin-top: 6px;
   border-radius: 24px 24px 0 0;
   background: linear-gradient(180deg, rgba(8, 20, 16, 0.4) 0%, rgba(6, 14, 12, 0.95) 100%);
   border-top: 2px solid rgba(243, 201, 105, 0.25);
@@ -532,7 +888,6 @@ html, body {
 }
 
 /* Elves Distinct Animations */
-/* Elf 1: Decorating Tree (Star placement movement) */
 @keyframes elfDecorate {
   0%, 100% { transform: translateY(0) rotate(0deg); }
   50% { transform: translateY(-3px) rotate(-3deg); }
@@ -542,7 +897,6 @@ html, body {
   transform-origin: center bottom;
 }
 
-/* Elf 2: Shoveling Snow */
 @keyframes elfShovel {
   0%, 100% { transform: rotate(0deg); }
   40% { transform: rotate(-12deg); }
@@ -553,7 +907,6 @@ html, body {
   transform-origin: center bottom;
 }
 
-/* Elf 3: Wrapping Present (Tie ribbon bounce) */
 @keyframes elfWrapper {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.04, 0.96); }
@@ -563,7 +916,6 @@ html, body {
   transform-origin: center bottom;
 }
 
-/* Elf 4: Carrying parcel (gentle bobbing) */
 @keyframes elfCarrier {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-4px); }
@@ -573,11 +925,7 @@ html, body {
   transform-origin: center bottom;
 }
 
-/* ==========================================================================
-   IDLE STATE: FREEZING / PAUSING ANIMATIONS
-   When both stopwatches are stopped, the village goes to peaceful rest.
-   ========================================================================== */
-
+/* IDLE STATE: Freezes animations when stopwatches are stopped */
 .village--idle .snowflake {
   display: none !important;
 }
@@ -608,7 +956,7 @@ html, body {
 }
 
 /* ==========================================================================
-   Reset Confirmation Modal
+   Modals (Reset & Login)
    ========================================================================== */
 
 .modal-backdrop {
@@ -617,7 +965,7 @@ html, body {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.75);
+  background: rgba(0, 0, 0, 0.78);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   display: flex;
@@ -635,13 +983,14 @@ html, body {
 .modal-card {
   background: linear-gradient(160deg, #1b382d 0%, #0d211a 100%);
   border: 2px solid var(--gold);
-  border-radius: 24px;
+  border-radius: 26px;
   padding: 32px 36px;
   width: 90%;
   max-width: 440px;
   text-align: center;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
   animation: popIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
 }
 
 @keyframes popIn {
@@ -656,16 +1005,16 @@ html, body {
 
 .modal-title {
   font-family: var(--font-serif);
-  font-size: 1.6rem;
+  font-size: 1.5rem;
   color: var(--gold);
   margin-bottom: 8px;
 }
 
 .modal-text {
-  font-size: 1rem;
+  font-size: 0.95rem;
   color: var(--cream-dim);
   line-height: 1.4;
-  margin-bottom: 24px;
+  margin-bottom: 22px;
 }
 
 .modal-actions {
@@ -675,7 +1024,7 @@ html, body {
 
 .modal-btn {
   flex: 1;
-  height: 50px;
+  height: 48px;
   border-radius: 14px;
   border: none;
   font-size: 1.05rem;
@@ -700,6 +1049,117 @@ html, body {
   border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
+/* Login Modal Specific */
+.modal-card--login {
+  max-width: 520px;
+  padding: 34px 28px 24px 28px;
+}
+
+.modal-header-decor {
+  font-size: 1.8rem;
+  margin-bottom: 6px;
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.login-player-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin: 18px 0 14px 0;
+}
+
+.login-player-card {
+  border-radius: 20px;
+  padding: 18px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.4), var(--emboss-shadow);
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.login-player-card:hover {
+  transform: translateY(-3px) scale(1.02);
+  border-color: #ffd166;
+}
+
+.login-card--p1 {
+  background: linear-gradient(145deg, #1e523d 0%, #113627 100%);
+}
+.login-card--p2 {
+  background: linear-gradient(145deg, #801835 0%, #4a0f1f 100%);
+}
+.login-player-card.selected {
+  border-color: #ffd166;
+  box-shadow: 0 0 20px rgba(243, 201, 105, 0.5);
+}
+
+.player-avatar {
+  font-size: 2.4rem;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
+}
+.player-title {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #fff;
+}
+.player-sub {
+  font-size: 0.78rem;
+  color: var(--cream-dim);
+}
+
+.login-select-btn {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 12px;
+  border: none;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.88rem;
+  margin-top: 4px;
+}
+.login-player-card.selected .login-select-btn {
+  background: #ffd166;
+  color: #1a2e26;
+}
+
+.login-joint-wrapper {
+  margin-bottom: 18px;
+}
+.joint-login-btn {
+  width: 100%;
+  padding: 10px;
+  border-radius: 14px;
+  border: 1px dashed rgba(243, 201, 105, 0.6);
+  background: rgba(243, 201, 105, 0.08);
+  color: #ffd166;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.joint-login-btn:hover, .joint-login-btn.selected {
+  background: rgba(243, 201, 105, 0.2);
+  border-color: #ffd166;
+  transform: scale(1.01);
+}
+
+.modal-btn--logout {
+  background: rgba(217, 4, 41, 0.25);
+  color: #fecdd3;
+  border: 1px solid rgba(217, 4, 41, 0.5);
+}
+.modal-btn--logout:hover {
+  background: rgba(217, 4, 41, 0.45);
+}
+
 /* ==========================================================================
    Responsive Adaptations (iPad Portrait & Phones)
    ========================================================================== */
@@ -718,7 +1178,7 @@ html, body {
 
   .gauge-wrapper {
     order: -1;
-    margin: 8px auto;
+    margin: 6px auto;
   }
 
   .stopwatch-card {
@@ -730,6 +1190,6 @@ html, body {
   }
 
   .village-container {
-    height: 250px;
+    height: 240px;
   }
 }

@@ -1,2 +1,3 @@
-{:app/name "justus-musikwichtel"
+{:project "musikwichtel"
+ :app/name "justus-musikwichtel"
  :app/exec ["clojure" "-M:run"]}

@@ -56,6 +56,69 @@
     (boolean (:show-reset-modal? db))))
 
 (rf/reg-sub
+  ::show-login-modal?
+  (fn [db _]
+    (boolean (:show-login-modal? db))))
+
+(rf/reg-sub
   ::current-player
   (fn [db _]
-    (:current-player db :player1)))
+    (:current-player db)))
+
+(rf/reg-sub
+  ::logged-in?
+  :<- [::current-player]
+  (fn [current-player _]
+    (some? current-player)))
+
+(rf/reg-sub
+  ::can-control?
+  :<- [::current-player]
+  (fn [current-player [_ player-key]]
+    (or (= current-player :both)
+        (= current-player (keyword player-key)))))
+
+(rf/reg-sub
+  ::gauge-display-info
+  (fn [_ _]
+    [(rf/subscribe [::leader-info])
+     (rf/subscribe [::current-player])
+     (rf/subscribe [::player :player1])
+     (rf/subscribe [::player :player2])])
+  (fn [[leader-info current-player p1-data p2-data] _]
+    (let [p1-name (or (:name p1-data) "Oboe")
+          p2-name (or (:name p2-data) "Klavier")
+          leader (:leader leader-info)
+          diff-str (:diff-formatted leader-info "00:00:00")
+          ;; On Santa's Dial:
+          ;; Left = NAUGHTY (-45 deg), Center = BALANCE (0 deg), Right = NICE (+45 deg)
+          needle-angle
+          (case current-player
+            :player1 (if (= leader :player1)
+                       (Math/abs (:angle-deg leader-info 0))
+                       (if (= leader :player2)
+                         (- (Math/abs (:angle-deg leader-info 0)))
+                         0))
+            :player2 (if (= leader :player2)
+                       (Math/abs (:angle-deg leader-info 0))
+                       (if (= leader :player1)
+                         (- (Math/abs (:angle-deg leader-info 0)))
+                         0))
+            ;; default (unauthenticated / both): needle shows the leader swinging to Nice
+            (if (= leader :player1)
+              (Math/abs (:angle-deg leader-info 0))
+              (if (= leader :player2)
+                (Math/abs (:angle-deg leader-info 0))
+                0)))
+          nice-name (when-let [np (:nice-player leader-info)]
+                      (if (= np :player1) p1-name p2-name))
+          naughty-name (when-let [np (:naughty-player leader-info)]
+                         (if (= np :player1) p1-name p2-name))]
+      {:needle-angle needle-angle
+       :leader leader
+       :diff-str diff-str
+       :nice-name nice-name
+       :naughty-name naughty-name
+       :current-player current-player
+       :p1-name p1-name
+       :p2-name p2-name})))

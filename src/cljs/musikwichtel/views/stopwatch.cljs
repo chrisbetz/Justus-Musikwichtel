@@ -27,18 +27,50 @@
                               (reset! editing? false))
                             (when (= (.-key e) "Escape")
                               (reset! editing? false)))}]
-           [:span.player-name-input
-            {:on-click (fn []
-                         (reset! temp-name current-name)
-                         (reset! editing? true))
-             :title "Tippen zum Ändern"}
-            current-name])]))))
+           [:div.player-title-row
+            [:span.player-name-text
+             {:on-click (fn []
+                          (reset! temp-name current-name)
+                          (reset! editing? true))
+              :title "Tippen zum Ändern des Namens"}
+             current-name]
+            [:span.edit-hint-pencil {:title "Name bearbeiten"} "✏️"]])]))))
 
 (defn stopwatch-card [player-key default-name theme-class]
   (let [running? @(rf/subscribe [::subs/is-running? player-key])
-        time-str @(rf/subscribe [::subs/formatted-time player-key])]
+        time-str @(rf/subscribe [::subs/formatted-time player-key])
+        current-user @(rf/subscribe [::subs/current-player])
+        can-control? @(rf/subscribe [::subs/can-control? player-key])
+        is-mine? (or (= current-user :both) (= current-user (keyword player-key)))]
     [:div.stopwatch-card
-     {:class (str theme-class (when running? " running"))}
+     {:class (str theme-class
+                  (when running? " running")
+                  (when is-mine? " card--mine")
+                  (when (and current-user (not can-control?)) " card--other-player"))}
+
+     ;; Festive Snow Cap on top of card
+     [:div.card-snow-cap]
+
+     ;; Holly & berry corner ornament
+     [:div.card-holly-decor
+      (if (= player-key :player1) "🌲" "🎹")]
+
+     ;; Player status / ownership badge
+     [:div.player-status-badge-row
+      (cond
+        is-mine?
+        [:span.player-badge.badge--mine "✨ Dein Instrument"]
+
+        (nil? current-user)
+        [:button.player-badge.badge--login-prompt
+         {:on-click #(rf/dispatch [::events/login player-key])}
+         "🔒 Anmelden"]
+
+        :else
+        [:button.player-badge.badge--switch-prompt
+         {:on-click #(rf/dispatch [::events/open-login-modal])}
+         "Wechseln ⇄"])]
+
      [player-name-input player-key default-name]
 
      [:div.time-display-box
@@ -47,12 +79,20 @@
      [:div.controls-row
       [:button.touch-btn.btn-start
        {:disabled running?
-        :on-click #(rf/dispatch [::events/start-timer player-key])
+        :on-click (fn []
+                    (if (or is-mine? (nil? current-user))
+                      (rf/dispatch [::events/start-timer player-key])
+                      (rf/dispatch [::events/open-login-modal])))
         :aria-label (str default-name " Start")}
-       "▶ Start"]
+       [:span.btn-icon "▶"]
+       [:span "Üben"]]
 
       [:button.touch-btn.btn-stop
        {:disabled (not running?)
-        :on-click #(rf/dispatch [::events/stop-timer player-key])
+        :on-click (fn []
+                    (if (or is-mine? (nil? current-user))
+                      (rf/dispatch [::events/stop-timer player-key])
+                      (rf/dispatch [::events/open-login-modal])))
         :aria-label (str default-name " Stopp")}
-       "⏸ Stopp"]]]))
+       [:span.btn-icon "⏸"]
+       [:span "Pause"]]]]))

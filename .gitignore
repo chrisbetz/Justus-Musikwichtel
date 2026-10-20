@@ -26,3 +26,4 @@ dev-storage/
 *.edn.local
 .secrets/
 secrets/
+resources/public/js

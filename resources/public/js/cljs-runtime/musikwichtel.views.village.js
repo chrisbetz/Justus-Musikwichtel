@@ -1,30 +1,30 @@
 goog.provide('musikwichtel.views.village');
 musikwichtel.views.village.living_christmas_village = (function musikwichtel$views$village$living_christmas_village(){
 var active_QMARK_ = cljs.core.deref(re_frame.core.subscribe.cljs$core$IFn$_invoke$arity$1(new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword("musikwichtel.subs","village-active?","musikwichtel.subs/village-active?",-1683605754)], null)));
-return new cljs.core.PersistentVector(null, 4, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"div.village-container","div.village-container",-484204578),new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null,"class","class",-2030961996),(cljs.core.truth_(active_QMARK_)?"village--active":"village--idle")], null),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"div.snow-container","div.snow-container",-1430201675),(function (){var iter__5480__auto__ = (function musikwichtel$views$village$living_christmas_village_$_iter__28808(s__28809){
+return new cljs.core.PersistentVector(null, 4, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"div.village-container","div.village-container",-484204578),new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null,"class","class",-2030961996),(cljs.core.truth_(active_QMARK_)?"village--active":"village--idle")], null),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"div.snow-container","div.snow-container",-1430201675),(function (){var iter__5480__auto__ = (function musikwichtel$views$village$living_christmas_village_$_iter__39785(s__39786){
 return (new cljs.core.LazySeq(null,(function (){
-var s__28809__$1 = s__28809;
+var s__39786__$1 = s__39786;
 while(true){
-var temp__5823__auto__ = cljs.core.seq(s__28809__$1);
+var temp__5823__auto__ = cljs.core.seq(s__39786__$1);
 if(temp__5823__auto__){
-var s__28809__$2 = temp__5823__auto__;
-if(cljs.core.chunked_seq_QMARK_(s__28809__$2)){
-var c__5478__auto__ = cljs.core.chunk_first(s__28809__$2);
+var s__39786__$2 = temp__5823__auto__;
+if(cljs.core.chunked_seq_QMARK_(s__39786__$2)){
+var c__5478__auto__ = cljs.core.chunk_first(s__39786__$2);
 var size__5479__auto__ = cljs.core.count(c__5478__auto__);
-var b__28811 = cljs.core.chunk_buffer(size__5479__auto__);
-if((function (){var i__28810 = (0);
+var b__39788 = cljs.core.chunk_buffer(size__5479__auto__);
+if((function (){var i__39787 = (0);
 while(true){
-if((i__28810 < size__5479__auto__)){
-var i = cljs.core._nth(c__5478__auto__,i__28810);
-cljs.core.chunk_append(b__28811,(function (){var left_pct = cljs.core.mod((i * 29.3),(98));
+if((i__39787 < size__5479__auto__)){
+var i = cljs.core._nth(c__5478__auto__,i__39787);
+cljs.core.chunk_append(b__39788,(function (){var left_pct = cljs.core.mod((i * 29.3),(98));
 var size = (3.5 + cljs.core.mod((i * 2.7),(5)));
 var dur = (3.8 + cljs.core.mod((i * 1.3),3.5));
 var delay = cljs.core.mod((i * 0.45),3.5);
 return cljs.core.with_meta(new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"div.snowflake","div.snowflake",-1960016898),new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null,"style","style",-496642736),new cljs.core.PersistentArrayMap(null, 6, [new cljs.core.Keyword(null,"left","left",-399115937),[cljs.core.str.cljs$core$IFn$_invoke$arity$1(left_pct),"%"].join(''),new cljs.core.Keyword(null,"top","top",-1856271961),"-15px",new cljs.core.Keyword(null,"width","width",-384071477),[cljs.core.str.cljs$core$IFn$_invoke$arity$1(size),"px"].join(''),new cljs.core.Keyword(null,"height","height",1025178622),[cljs.core.str.cljs$core$IFn$_invoke$arity$1(size),"px"].join(''),new cljs.core.Keyword(null,"animation-duration","animation-duration",-1261077706),[cljs.core.str.cljs$core$IFn$_invoke$arity$1(dur),"s"].join(''),new cljs.core.Keyword(null,"animation-delay","animation-delay",-488570176),[cljs.core.str.cljs$core$IFn$_invoke$arity$1(delay),"s"].join('')], null)], null)], null),new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null,"key","key",-1516042587),["flake-",cljs.core.str.cljs$core$IFn$_invoke$arity$1(i)].join('')], null));
 })());
 
-var G__28835 = (i__28810 + (1));
-i__28810 = G__28835;
+var G__39793 = (i__39787 + (1));
+i__39787 = G__39793;
 continue;
 } else {
 return true;
@@ -32,18 +32,18 @@ return true;
 break;
 }
 })()){
-return cljs.core.chunk_cons(cljs.core.chunk(b__28811),musikwichtel$views$village$living_christmas_village_$_iter__28808(cljs.core.chunk_rest(s__28809__$2)));
+return cljs.core.chunk_cons(cljs.core.chunk(b__39788),musikwichtel$views$village$living_christmas_village_$_iter__39785(cljs.core.chunk_rest(s__39786__$2)));
 } else {
-return cljs.core.chunk_cons(cljs.core.chunk(b__28811),null);
+return cljs.core.chunk_cons(cljs.core.chunk(b__39788),null);
 }
 } else {
-var i = cljs.core.first(s__28809__$2);
+var i = cljs.core.first(s__39786__$2);
 return cljs.core.cons((function (){var left_pct = cljs.core.mod((i * 29.3),(98));
 var size = (3.5 + cljs.core.mod((i * 2.7),(5)));
 var dur = (3.8 + cljs.core.mod((i * 1.3),3.5));
 var delay = cljs.core.mod((i * 0.45),3.5);
 return cljs.core.with_meta(new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"div.snowflake","div.snowflake",-1960016898),new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null,"style","style",-496642736),new cljs.core.PersistentArrayMap(null, 6, [new cljs.core.Keyword(null,"left","left",-399115937),[cljs.core.str.cljs$core$IFn$_invoke$arity$1(left_pct),"%"].join(''),new cljs.core.Keyword(null,"top","top",-1856271961),"-15px",new cljs.core.Keyword(null,"width","width",-384071477),[cljs.core.str.cljs$core$IFn$_invoke$arity$1(size),"px"].join(''),new cljs.core.Keyword(null,"height","height",1025178622),[cljs.core.str.cljs$core$IFn$_invoke$arity$1(size),"px"].join(''),new cljs.core.Keyword(null,"animation-duration","animation-duration",-1261077706),[cljs.core.str.cljs$core$IFn$_invoke$arity$1(dur),"s"].join(''),new cljs.core.Keyword(null,"animation-delay","animation-delay",-488570176),[cljs.core.str.cljs$core$IFn$_invoke$arity$1(delay),"s"].join('')], null)], null)], null),new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null,"key","key",-1516042587),["flake-",cljs.core.str.cljs$core$IFn$_invoke$arity$1(i)].join('')], null));
-})(),musikwichtel$views$village$living_christmas_village_$_iter__28808(cljs.core.rest(s__28809__$2)));
+})(),musikwichtel$views$village$living_christmas_village_$_iter__39785(cljs.core.rest(s__39786__$2)));
 }
 } else {
 return null;

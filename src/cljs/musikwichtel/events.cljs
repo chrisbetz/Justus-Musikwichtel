@@ -8,7 +8,8 @@
 (defn- save-cache [db]
   (try
     (let [data {:player1 (:player1 db)
-                :player2 (:player2 db)}
+                :player2 (:player2 db)
+                :current-player (:current-player db)}
           json (js/JSON.stringify (clj->js data))]
       (.setItem js/localStorage local-storage-key json))
     (catch :default _ nil)))
@@ -25,7 +26,8 @@
     (let [cached (load-cache)]
       (cond-> db/default-db
         (:player1 cached) (assoc :player1 (:player1 cached))
-        (:player2 cached) (assoc :player2 (:player2 cached))))))
+        (:player2 cached) (assoc :player2 (:player2 cached))
+        (:current-player cached) (assoc :current-player (keyword (:current-player cached)))))))
 
 (rf/reg-event-db
   ::tick
@@ -52,57 +54,125 @@
       (let [updated (cond-> db
                       (:player1 server-data) (assoc :player1 (:player1 server-data))
                       (:player2 server-data) (assoc :player2 (:player2 server-data))
-                      (:current-player server-data) (assoc :current-player (keyword (:current-player server-data)))
+                      (contains? server-data :current-player)
+                      (assoc :current-player (when-let [cp (:current-player server-data)]
+                                               (keyword cp)))
                       true (assoc :server-synced? true))]
         (save-cache updated)
         updated))))
 
+;; Authentication Events
+(rf/reg-event-db
+  ::open-login-modal
+  (fn [db _]
+    (assoc db :show-login-modal? true)))
+
+(rf/reg-event-db
+  ::close-login-modal
+  (fn [db _]
+    (assoc db :show-login-modal? false)))
+
+(rf/reg-event-fx
+  ::login
+  (fn [{:keys [db]} [_ player-key]]
+    (let [pk (keyword player-key)
+          optimistic-db (-> db
+                            (assoc :current-player pk)
+                            (assoc :show-login-modal? false))]
+      (save-cache optimistic-db)
+      (-> (js/fetch "/api/login"
+                    #js {:method "POST"
+                         :headers #js {"Content-Type" "application/json"}
+                         :body (js/JSON.stringify #js {:player (name pk)})})
+          (.then (fn [resp] (when (.-ok resp) (.json resp))))
+          (.then (fn [data]
+                   (when data
+                     (rf/dispatch [::poll-state]))))
+          (.catch (fn [_] nil)))
+      {:db optimistic-db})))
+
+(rf/reg-event-fx
+  ::logout
+  (fn [{:keys [db]} _]
+    (let [optimistic-db (-> db
+                            (assoc :current-player nil)
+                            (assoc :show-login-modal? true))]
+      (save-cache optimistic-db)
+      (-> (js/fetch "/api/logout"
+                    #js {:method "POST"})
+          (.then (fn [_]
+                   (rf/dispatch [::poll-state])))
+          (.catch (fn [_] nil)))
+      {:db optimistic-db})))
+
 (rf/reg-event-fx
   ::start-timer
   (fn [{:keys [db]} [_ player-key]]
-    (let [now (.now js/Date)
-          pk (keyword player-key)
-          optimistic-db (assoc-in db [pk :running?] true)
-          optimistic-db (assoc-in optimistic-db [pk :start-ts] now)]
-      (save-cache optimistic-db)
-      (let [query (.-search js/window.location)]
-        (-> (js/fetch (str "/api/start" query)
-                      #js {:method "POST"
-                           :headers #js {"Content-Type" "application/json"}
-                           :body (js/JSON.stringify #js {:player (name pk)})})
-            (.then (fn [resp] (when (.-ok resp) (.json resp))))
-            (.then (fn [data]
-                     (when data
-                       (rf/dispatch [::state-received (keywordize-keys (js->clj data))]))))
-            (.catch (fn [_] nil))))
-      {:db optimistic-db})))
+    (let [current (:current-player db)
+          pk (keyword player-key)]
+      (cond
+        ;; If not logged in, prompt user to select player
+        (nil? current)
+        {:db (assoc db :show-login-modal? true)}
+
+        ;; If logged in as someone else and not :both, show prompt or ignore
+        (and (not= current :both) (not= current pk))
+        {:db (assoc db :show-login-modal? true)}
+
+        :else
+        (let [now (.now js/Date)
+              optimistic-db (-> db
+                                (assoc-in [pk :running?] true)
+                                (assoc-in [pk :start-ts] now))]
+          (save-cache optimistic-db)
+          (let [query (.-search js/window.location)]
+            (-> (js/fetch (str "/api/start" query)
+                          #js {:method "POST"
+                               :headers #js {"Content-Type" "application/json"}
+                               :body (js/JSON.stringify #js {:player (name pk)})})
+                (.then (fn [resp] (when (.-ok resp) (.json resp))))
+                (.then (fn [data]
+                         (when data
+                           (rf/dispatch [::state-received (keywordize-keys (js->clj data))]))))
+                (.catch (fn [_] nil))))
+          {:db optimistic-db})))))
 
 (rf/reg-event-fx
   ::stop-timer
   (fn [{:keys [db]} [_ player-key]]
-    (let [now (.now js/Date)
-          pk (keyword player-key)
-          p-data (get db pk)
-          total (:total-ms p-data 0)
-          start (:start-ts p-data)
-          elapsed (if (and start (> now start)) (- now start) 0)
-          new-total (+ total elapsed)
-          optimistic-db (-> db
-                            (assoc-in [pk :running?] false)
-                            (assoc-in [pk :total-ms] new-total)
-                            (assoc-in [pk :start-ts] nil))]
-      (save-cache optimistic-db)
-      (let [query (.-search js/window.location)]
-        (-> (js/fetch (str "/api/stop" query)
-                      #js {:method "POST"
-                           :headers #js {"Content-Type" "application/json"}
-                           :body (js/JSON.stringify #js {:player (name pk)})})
-            (.then (fn [resp] (when (.-ok resp) (.json resp))))
-            (.then (fn [data]
-                     (when data
-                       (rf/dispatch [::state-received (keywordize-keys (js->clj data))]))))
-            (.catch (fn [_] nil))))
-      {:db optimistic-db})))
+    (let [current (:current-player db)
+          pk (keyword player-key)]
+      (cond
+        ;; If not logged in, prompt user to select player
+        (nil? current)
+        {:db (assoc db :show-login-modal? true)}
+
+        (and (not= current :both) (not= current pk))
+        {:db (assoc db :show-login-modal? true)}
+
+        :else
+        (let [now (.now js/Date)
+              p-data (get db pk)
+              total (:total-ms p-data 0)
+              start (:start-ts p-data)
+              elapsed (if (and start (> now start)) (- now start) 0)
+              new-total (+ total elapsed)
+              optimistic-db (-> db
+                                (assoc-in [pk :running?] false)
+                                (assoc-in [pk :total-ms] new-total)
+                                (assoc-in [pk :start-ts] nil))]
+          (save-cache optimistic-db)
+          (let [query (.-search js/window.location)]
+            (-> (js/fetch (str "/api/stop" query)
+                          #js {:method "POST"
+                               :headers #js {"Content-Type" "application/json"}
+                               :body (js/JSON.stringify #js {:player (name pk)})})
+                (.then (fn [resp] (when (.-ok resp) (.json resp))))
+                (.then (fn [data]
+                         (when data
+                           (rf/dispatch [::state-received (keywordize-keys (js->clj data))]))))
+                (.catch (fn [_] nil))))
+          {:db optimistic-db})))))
 
 (rf/reg-event-db
   ::open-reset-modal

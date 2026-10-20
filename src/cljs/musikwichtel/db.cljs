@@ -9,7 +9,8 @@
              :total-ms 0
              :running? false
              :start-ts nil}
-   :current-player :player1
+   :current-player nil
    :wall-clock-now (.now js/Date)
    :show-reset-modal? false
+   :show-login-modal? false
    :server-synced? false})
