@@ -30,11 +30,11 @@ re_frame.core.dispatch_sync(new cljs.core.PersistentVector(null, 1, 5, cljs.core
 
 re_frame.core.dispatch(new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword("musikwichtel.events","poll-state","musikwichtel.events/poll-state",2113227716)], null));
 
-var temp__5823__auto___39859 = document.getElementById("app");
-if(cljs.core.truth_(temp__5823__auto___39859)){
-var el_39860 = temp__5823__auto___39859;
-var root_39861 = reagent.dom.client.create_root(el_39860);
-cljs.core.reset_BANG_(musikwichtel.core.root_atom,root_39861);
+var temp__5823__auto___24784 = document.getElementById("app");
+if(cljs.core.truth_(temp__5823__auto___24784)){
+var el_24785 = temp__5823__auto___24784;
+var root_24786 = reagent.dom.client.create_root(el_24785);
+cljs.core.reset_BANG_(musikwichtel.core.root_atom,root_24786);
 
 musikwichtel.core.render_BANG_();
 } else {

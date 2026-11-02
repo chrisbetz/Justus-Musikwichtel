@@ -26,6 +26,7 @@
 (defn player-login-modal []
   (let [open? @(rf/subscribe [::subs/show-login-modal?])
         current @(rf/subscribe [::subs/current-player])
+        garden-user @(rf/subscribe [::subs/garden-user])
         p1-data @(rf/subscribe [::subs/player :player1])
         p2-data @(rf/subscribe [::subs/player :player2])
         p1-name (or (:name p1-data) "Oboe")
@@ -40,45 +41,71 @@
          [:span "🔔"]
          [:span "🎄"]
          [:span "✨"]]
-        [:h2.modal-title "Wer musiziert heute?"]
-        [:p.modal-text "Melde dich an, um deine Stoppuhr zu bedienen:"]
+        [:h2.modal-title "Garden ID Anmeldung"]
+        [:p.modal-text "Das Musik-Duell ist autorisiert für zwei Musiker:"]
 
-        ;; Player Selection Cards
+        ;; Player Selection Cards showing Garden ID Mapping
         [:div.login-player-grid
-         ;; Player 1 (Oboe)
+         ;; Player 1 (Oboe) -> @quentin
          [:div.login-player-card.login-card--p1
           {:class (when (= current :player1) "selected")
-           :on-click #(rf/dispatch [::events/login :player1])}
+           :on-click #(rf/dispatch [::events/dev-login-impersonate "quentin"])}
           [:div.player-avatar "🌲"]
           [:div.player-info
            [:div.player-title p1-name]
-           [:div.player-sub "Grüner Wichtel"]]
+           [:div.player-sub "Garden ID: @quentin"]]
           [:button.login-select-btn
-           (if (= current :player1) "✓ Angemeldet" (str "Als " p1-name " üben"))]]
+           (if (= current :player1)
+             "✓ Angemeldet"
+             "Als @quentin anmelden")]]
 
-         ;; Player 2 (Klavier)
+         ;; Player 2 (Klavier) -> @kilian
          [:div.login-player-card.login-card--p2
           {:class (when (= current :player2) "selected")
-           :on-click #(rf/dispatch [::events/login :player2])}
+           :on-click #(rf/dispatch [::events/dev-login-impersonate "kilian"])}
           [:div.player-avatar "🎹"]
           [:div.player-info
            [:div.player-title p2-name]
-           [:div.player-sub "Roter Wichtel"]]
+           [:div.player-sub "Garden ID: @kilian"]]
           [:button.login-select-btn
-           (if (= current :player2) "✓ Angemeldet" (str "Als " p2-name " üben"))]]]
+           (if (= current :player2)
+             "✓ Angemeldet"
+             "Als @kilian anmelden")]]]
 
-        ;; Joint mode option
-        [:div.login-joint-wrapper
-         [:button.joint-login-btn
-          {:class (when (= current :both) "selected")
-           :on-click #(rf/dispatch [::events/login :both])}
-          "🧑‍🎄 Gemeinsam am iPad üben (beide freischalten)"]]
+        ;; Garden ID Login / Status Banner
+        (cond
+          (= current :player1)
+          [:div.login-status-box.status--success
+           [:span "✨ Angemeldet als "]
+           [:strong "@quentin"]
+           [:span (str " — Du steuerst die " p1-name " (Grüner Wichtel).")]]
+
+          (= current :player2)
+          [:div.login-status-box.status--success
+           [:span "✨ Angemeldet als "]
+           [:strong "@kilian"]
+           [:span (str " — Du steuerst das " p2-name " (Roter Wichtel).")]]
+
+          garden-user
+          [:div.login-status-box.status--warning
+           [:span "⚠️ Angemeldet als "]
+           [:strong (str "@" (:username garden-user))]
+           [:div.text-xs "Dieser Garden ID Account hat keine Spielberechtigung. Nur @quentin und @kilian dürfen Stoppuhren steuern."]]
+
+          :else
+          [:div.login-garden-cta
+           [:a.btn-garden-sso
+            {:href "/.application.garden/garden-id/login"}
+            "🎅 Mit Garden ID anmelden →"]
+           [:div.login-garden-hint
+            "Unter application.garden wirst du sicher per OpenID Connect authentifiziert."]])
 
         ;; Footer Actions
         [:div.modal-actions.login-modal-actions
-         (when current
-           [:button.modal-btn.modal-btn--logout
-            {:on-click #(rf/dispatch [::events/logout])}
+         (when garden-user
+           [:a.modal-btn.modal-btn--logout
+            {:href "/.application.garden/garden-id/logout"
+             :on-click (fn [_] (rf/dispatch [::events/logout]))}
             "Abmelden"])
          [:button.modal-btn.modal-btn--cancel
           {:on-click #(rf/dispatch [::events/close-login-modal])}

@@ -66,7 +66,24 @@
     (:current-player db)))
 
 (rf/reg-sub
+  ::garden-user
+  (fn [db _]
+    (:garden-user db)))
+
+(rf/reg-sub
+  ::garden-username
+  :<- [::garden-user]
+  (fn [user _]
+    (:username user)))
+
+(rf/reg-sub
   ::logged-in?
+  :<- [::garden-user]
+  (fn [user _]
+    (some? user)))
+
+(rf/reg-sub
+  ::authorized?
   :<- [::current-player]
   (fn [current-player _]
     (some? current-player)))
@@ -75,8 +92,8 @@
   ::can-control?
   :<- [::current-player]
   (fn [current-player [_ player-key]]
-    (or (= current-player :both)
-        (= current-player (keyword player-key)))))
+    (and (some? current-player)
+         (= current-player (keyword player-key)))))
 
 (rf/reg-sub
   ::gauge-display-info

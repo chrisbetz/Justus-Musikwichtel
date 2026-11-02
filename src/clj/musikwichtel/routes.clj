@@ -20,8 +20,6 @@
           (context "/api" []
             (GET "/state" req
               (api/handle-get-state storage game-id req))
-            (POST "/login" req
-              (api/handle-login req))
             (POST "/logout" req
               (api/handle-logout req))
             (POST "/start" req

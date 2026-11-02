@@ -4,14 +4,14 @@
             [musikwichtel.subs :as subs]
             [musikwichtel.events :as events]))
 
-(defn- player-name-input [player-key default-name]
+(defn- player-name-input [player-key default-name can-edit?]
   (let [editing? (r/atom false)
         temp-name (r/atom "")]
-    (fn [player-key default-name]
+    (fn [player-key default-name can-edit?]
       (let [p-data @(rf/subscribe [::subs/player player-key])
             current-name (or (:name p-data) default-name)]
         [:div.player-name-wrapper
-         (if @editing?
+         (if (and can-edit? @editing?)
            [:input.player-name-input
             {:auto-focus true
              :value @temp-name
@@ -29,23 +29,26 @@
                               (reset! editing? false)))}]
            [:div.player-title-row
             [:span.player-name-text
-             {:on-click (fn []
-                          (reset! temp-name current-name)
-                          (reset! editing? true))
-              :title "Tippen zum Ändern des Namens"}
+             (if can-edit?
+               {:on-click (fn []
+                            (reset! temp-name current-name)
+                            (reset! editing? true))
+                :title "Tippen zum Ändern des Namens"}
+               {:title (str "Nur für @" (if (= player-key :player1) "quentin" "kilian"))})
              current-name]
-            [:span.edit-hint-pencil {:title "Name bearbeiten"} "✏️"]])]))))
+            (when can-edit?
+              [:span.edit-hint-pencil {:title "Name bearbeiten"} "✏️"])])]))))
 
 (defn stopwatch-card [player-key default-name theme-class]
   (let [running? @(rf/subscribe [::subs/is-running? player-key])
         time-str @(rf/subscribe [::subs/formatted-time player-key])
         current-user @(rf/subscribe [::subs/current-player])
         can-control? @(rf/subscribe [::subs/can-control? player-key])
-        is-mine? (or (= current-user :both) (= current-user (keyword player-key)))]
+        target-garden-id (if (= player-key :player1) "quentin" "kilian")]
     [:div.stopwatch-card
      {:class (str theme-class
                   (when running? " running")
-                  (when is-mine? " card--mine")
+                  (when can-control? " card--mine")
                   (when (and current-user (not can-control?)) " card--other-player"))}
 
      ;; Festive Snow Cap on top of card
@@ -58,39 +61,40 @@
      ;; Player status / ownership badge
      [:div.player-status-badge-row
       (cond
-        is-mine?
-        [:span.player-badge.badge--mine "✨ Dein Instrument"]
+        can-control?
+        [:span.player-badge.badge--mine (str "✨ Dein Instrument (@" target-garden-id ")")]
 
-        (nil? current-user)
-        [:button.player-badge.badge--login-prompt
-         {:on-click #(rf/dispatch [::events/login player-key])}
-         "🔒 Anmelden"]
+        current-user
+        [:button.player-badge.badge--switch-prompt
+         {:on-click #(rf/dispatch [::events/open-login-modal])
+          :title (str "Nur für @" target-garden-id)}
+         (str "🔒 Nur für @" target-garden-id)]
 
         :else
-        [:button.player-badge.badge--switch-prompt
+        [:button.player-badge.badge--login-prompt
          {:on-click #(rf/dispatch [::events/open-login-modal])}
-         "Wechseln ⇄"])]
+         (str "🔒 @" target-garden-id " anmelden")])]
 
-     [player-name-input player-key default-name]
+     [player-name-input player-key default-name can-control?]
 
      [:div.time-display-box
       [:span.time-digits time-str]]
 
      [:div.controls-row
       [:button.touch-btn.btn-start
-       {:disabled running?
+       {:disabled (or running? (not can-control?))
         :on-click (fn []
-                    (if (or is-mine? (nil? current-user))
+                    (if can-control?
                       (rf/dispatch [::events/start-timer player-key])
                       (rf/dispatch [::events/open-login-modal])))
         :aria-label (str default-name " Start")}
        [:span.btn-icon "▶"]
-       [:span "Üben"]]
+       [:span (if can-control? "Üben" "Gesperrt")]]
 
       [:button.touch-btn.btn-stop
-       {:disabled (not running?)
+       {:disabled (or (not running?) (not can-control?))
         :on-click (fn []
-                    (if (or is-mine? (nil? current-user))
+                    (if can-control?
                       (rf/dispatch [::events/stop-timer player-key])
                       (rf/dispatch [::events/open-login-modal])))
         :aria-label (str default-name " Stopp")}

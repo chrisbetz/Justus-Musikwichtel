@@ -66,10 +66,10 @@ You can run the application locally using either an embedded **SQLite** backend 
    The backend server will start on `http://localhost:8080`.
 
 5. **Testing Both Players in Local Development**:
-   Because application.garden OIDC is not active locally, the dev server simulates the two players using query parameters:
-   - **Player 1 (Oboe)**: Open `http://localhost:8080?user=player1`
-   - **Player 2 (Klavier)**: Open `http://localhost:8080?user=player2` in an incognito or secondary window.
-   Both players share the same persistent competition state and update in real-time.
+   Garden ID authentication runs automatically in local development via `nextjournal.garden-id`'s built-in dev mode (`wrap-auth-fake`):
+   - **Player 1 (Oboe)**: Click **🎅 Garden ID Login** and select/enter **quentin** (or visit `http://localhost:8080/.application.garden/garden-id/login`).
+   - **Player 2 (Klavier)**: In an incognito or secondary window, log in as **kilian**.
+   - Spectators / other accounts can view the competition live, but only `@quentin` is authorized to control Oboe and only `@kilian` is authorized to control Klavier.
 
 ---
 
@@ -99,9 +99,12 @@ The repository includes `garden.edn`:
 - In production, the app automatically selects `:datalevin` and persists its LMDB/Datalog store into `$GARDEN_STORAGE/dtlv`.
 
 ### User Authentication in Production
-- Authenticates users via Garden ID OpenID Connect.
+- Authenticates users via Garden ID OpenID Connect (`io.github.nextjournal/garden-id`).
 - The platform supplies `OAUTH2_CLIENT_ID` and `OAUTH2_CLIENT_SECRET`.
-- Users log in with their GitHub or Apple account; their account ID maps to Player 1 or Player 2.
+- Authorization mapping:
+  - Garden ID **`quentin`** is authorized to control **Oboe** (`:player1`).
+  - Garden ID **`kilian`** is authorized to control **Klavier** (`:player2`).
+  - Unauthenticated requests receive 401; unauthorized Garden IDs receive 403. Both can spectate the live scoreboard and village in read-only mode.
 
 ### Deploying
 1. Install the garden CLI (if not already installed):

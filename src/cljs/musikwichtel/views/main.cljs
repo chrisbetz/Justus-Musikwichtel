@@ -20,6 +20,7 @@
 
 (defn main-view []
   (let [current-user @(rf/subscribe [::subs/current-player])
+        garden-user  @(rf/subscribe [::subs/garden-user])
         p1-data @(rf/subscribe [::subs/player :player1])
         p2-data @(rf/subscribe [::subs/player :player2])
         p1-name (or (:name p1-data) "Oboe")
@@ -42,13 +43,14 @@
       ;; Header Controls (User badge + Reset)
       [:div.header-actions
        ;; Current User Login Indicator
-       (if current-user
+       (cond
+         current-user
          [:div.user-pill-container
           [:div.user-pill
            {:class (case current-user
                      :player1 "user-pill--p1"
                      :player2 "user-pill--p2"
-                     "user-pill--both")}
+                     "")}
            [:span.pill-icon
             (case current-user
               :player1 "🌲"
@@ -56,17 +58,28 @@
               "🧑‍🎄")]
            [:span.pill-name
             (case current-user
-              :player1 p1-name
-              :player2 p2-name
-              "Beide aktiv")]]
+              :player1 (str p1-name " (@quentin)")
+              :player2 (str p2-name " (@kilian)")
+              "Aktiv")]]
           [:button.pill-switch-btn
            {:on-click #(rf/dispatch [::events/open-login-modal])
-            :title "Spieler wechseln"}
+            :title "Garden ID Konto / Abmelden"}
+           "Konto 👤"]]
+
+         garden-user
+         [:div.user-pill-container
+          [:div.user-pill.user-pill--guest
+           [:span.pill-icon "👀"]
+           [:span.pill-name (str "@" (:username garden-user) " (Zuschauer)")]]
+          [:button.pill-switch-btn
+           {:on-click #(rf/dispatch [::events/open-login-modal])
+            :title "Konto wechseln"}
            "Wechseln ⇄"]]
 
+         :else
          [:button.btn-header-login
           {:on-click #(rf/dispatch [::events/open-login-modal])}
-          "🎅 Anmelden"])
+          "🎅 Garden ID Login"])
 
        ;; Reset icon button
        [:button.reset-icon-btn

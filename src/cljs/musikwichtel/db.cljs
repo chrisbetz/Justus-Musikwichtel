@@ -10,6 +10,7 @@
              :running? false
              :start-ts nil}
    :current-player nil
+   :garden-user nil
    :wall-clock-now (.now js/Date)
    :show-reset-modal? false
    :show-login-modal? false

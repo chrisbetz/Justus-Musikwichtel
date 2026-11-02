@@ -1130,25 +1130,69 @@ html, body {
   color: #1a2e26;
 }
 
-.login-joint-wrapper {
-  margin-bottom: 18px;
+.user-pill--guest {
+  color: #a0aec0;
+  border-color: rgba(160, 174, 192, 0.3);
 }
-.joint-login-btn {
-  width: 100%;
-  padding: 10px;
+
+.login-status-box {
   border-radius: 14px;
-  border: 1px dashed rgba(243, 201, 105, 0.6);
-  background: rgba(243, 201, 105, 0.08);
-  color: #ffd166;
-  font-size: 0.9rem;
+  padding: 12px 16px;
+  margin: 12px 0 16px 0;
+  font-size: 0.88rem;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.status--success {
+  background: rgba(30, 82, 61, 0.4);
+  border: 1px solid rgba(74, 222, 128, 0.4);
+  color: #bbf7d0;
+}
+
+.status--warning {
+  background: rgba(180, 83, 9, 0.3);
+  border: 1px solid rgba(251, 191, 36, 0.4);
+  color: #fef08a;
+}
+
+.login-garden-cta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin: 14px 0 18px 0;
+}
+
+.btn-garden-sso {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px 20px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #d90429 0%, #990000 100%);
+  color: #fff;
+  text-decoration: none;
   font-weight: 700;
+  font-size: 1rem;
+  box-shadow: 0 4px 14px rgba(217, 4, 41, 0.4), var(--emboss-shadow);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   cursor: pointer;
   transition: all 0.2s ease;
 }
-.joint-login-btn:hover, .joint-login-btn.selected {
-  background: rgba(243, 201, 105, 0.2);
-  border-color: #ffd166;
-  transform: scale(1.01);
+
+.btn-garden-sso:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(217, 4, 41, 0.6);
+  color: #fff;
+}
+
+.login-garden-hint {
+  font-size: 0.76rem;
+  color: var(--cream-dim);
+  text-align: center;
 }
 
 .modal-btn--logout {
