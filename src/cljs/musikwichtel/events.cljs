@@ -56,6 +56,8 @@
                                                (keyword cp)))
                       (contains? server-data :garden-user)
                       (assoc :garden-user (:garden-user server-data))
+                      (contains? server-data :admin?)
+                      (assoc :admin? (boolean (:admin? server-data)))
                       true (assoc :server-synced? true))]
         (save-cache updated)
         updated))))
@@ -74,7 +76,11 @@
 (rf/reg-event-fx
   ::dev-login-impersonate
   (fn [_ [_ username]]
-    (let [disp-name (if (= username "quentin") "Quentin" "Kilian")
+    (let [disp-name (case username
+                      "quentin" "Quentin"
+                      "kilian"  "Kilian"
+                      "justus"  "Justus"
+                      username)
           body (str "username=" (js/encodeURIComponent username)
                     "&name=" (js/encodeURIComponent disp-name)
                     "&email=" (js/encodeURIComponent (str username "@application.garden")))]
@@ -93,7 +99,8 @@
   (fn [{:keys [db]} _]
     (let [optimistic-db (assoc db
                                :current-player nil
-                               :garden-user nil)]
+                               :garden-user nil
+                               :admin? false)]
       (-> (js/fetch "/api/logout"
                     #js {:method "POST"})
           (.then (fn [_]
@@ -185,8 +192,8 @@
 (rf/reg-event-fx
   ::confirm-reset
   (fn [{:keys [db]} _]
-    (let [current (:current-player db)]
-      (if-not current
+    (let [admin? (:admin? db)]
+      (if-not admin?
         {:db (-> db
                  (assoc :show-reset-modal? false)
                  (assoc :show-login-modal? true))}

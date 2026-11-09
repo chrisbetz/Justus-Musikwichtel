@@ -24,20 +24,32 @@
   (when-let [username (:username garden-user)]
     (get garden-id->player (str/lower-case (str/trim (str username))))))
 
+;; Only garden-id "justus" is allowed to reset the clocks
+(def admin-garden-id "justus")
+
+(defn admin?
+  "Returns true if the authenticated garden-user is the admin (justus)."
+  [garden-user]
+  (when-let [username (:username garden-user)]
+    (= (str/lower-case (str/trim (str username))) admin-garden-id)))
+
 (defn wrap-player-identity
-  "Injects :current-player and :garden-user into request.
+  "Injects :current-player, :garden-user, and :admin? into request.
    - :garden-user: user map from session (via nextjournal.garden-id) or nil
    - :current-player:
        :player1 if garden-user username is 'quentin' (Oboe)
        :player2 if garden-user username is 'kilian' (Klavier)
-       nil if unauthenticated or unauthorized"
+       nil if unauthenticated or unauthorized
+   - :admin?: true if garden-user username is 'justus'"
   [handler]
   (fn [request]
     (let [garden-user (garden-id/get-user request)
           player-id (resolve-player garden-user)
+          is-admin? (boolean (admin? garden-user))
           req* (assoc request
                       :current-player player-id
-                      :garden-user garden-user)]
+                      :garden-user garden-user
+                      :admin? is-admin?)]
       (handler req*))))
 
 (defn wrap-auth-stack

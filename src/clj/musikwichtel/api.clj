@@ -10,9 +10,12 @@
 (defn handle-get-state [storage game-id req]
   (let [game (db/get-game storage game-id)
         current-player (:current-player req)
-        garden-user (:garden-user req)]
+        garden-user (:garden-user req)
+        is-admin? (boolean (:admin? req))]
     (resp/response (assoc game
                           :current-player current-player
+                          :admin? is-admin?
+                          :can-reset? is-admin?
                           :garden-user (when garden-user
                                          (select-keys garden-user [:username :name :email]))
                           :server-time (System/currentTimeMillis)))))
@@ -62,6 +65,8 @@
             updated (db/start-timer! storage game-id requested now)]
         (resp/response (assoc updated
                               :current-player (:current-player req)
+                              :admin? (boolean (:admin? req))
+                              :can-reset? (boolean (:admin? req))
                               :garden-user (when-let [u (:garden-user req)]
                                              (select-keys u [:username :name :email]))
                               :server-time now))))))
@@ -76,13 +81,14 @@
             updated (db/stop-timer! storage game-id requested now)]
         (resp/response (assoc updated
                               :current-player (:current-player req)
+                              :admin? (boolean (:admin? req))
+                              :can-reset? (boolean (:admin? req))
                               :garden-user (when-let [u (:garden-user req)]
                                              (select-keys u [:username :name :email]))
                               :server-time now))))))
 
 (defn handle-reset [storage game-id req]
-  (let [garden-user (:garden-user req)
-        current-player (:current-player req)]
+  (let [garden-user (:garden-user req)]
     (cond
       (nil? garden-user)
       (resp/status
@@ -91,16 +97,19 @@
                         :login-uri "/.application.garden/garden-id/login"})
         401)
 
-      (nil? current-player)
+      (not (auth/admin? garden-user))
       (resp/status
-        (resp/response {:error "Verboten: Nur @quentin und @kilian dürfen die Uhren zurücksetzen."
-                        :code "unauthorized_user"})
+        (resp/response {:error "Verboten: Nur Garden ID 'justus' darf die Uhren zurücksetzen."
+                        :code "forbidden_admin_only"
+                        :required-user auth/admin-garden-id})
         403)
 
       :else
       (let [updated (db/reset-game! storage game-id)]
         (resp/response (assoc updated
-                              :current-player current-player
+                              :current-player (:current-player req)
+                              :admin? true
+                              :can-reset? true
                               :garden-user (when garden-user
                                              (select-keys garden-user [:username :name :email]))
                               :server-time (System/currentTimeMillis)))))))

@@ -248,6 +248,7 @@ html, body {
 .user-pill--p1 { color: #a7f3d0; }
 .user-pill--p2 { color: #fecdd3; }
 .user-pill--both { color: #ffd166; }
+.user-pill--admin { color: #fde047; font-weight: 800; }
 
 .pill-switch-btn {
   background: rgba(255, 255, 255, 0.15);
@@ -299,6 +300,11 @@ html, body {
 .reset-icon-btn:hover, .reset-icon-btn:active {
   background: rgba(243, 201, 105, 0.2);
   transform: rotate(90deg);
+}
+.reset-icon-btn--admin {
+  border-color: #fde047;
+  color: #fde047;
+  box-shadow: 0 0 10px rgba(253, 224, 71, 0.4);
 }
 
 /* ==========================================================================
@@ -1128,6 +1134,50 @@ html, body {
 .login-player-card.selected .login-select-btn {
   background: #ffd166;
   color: #1a2e26;
+}
+
+.login-admin-card {
+  border-radius: 16px;
+  padding: 12px 16px;
+  margin: 0 0 14px 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  background: linear-gradient(145deg, #3b2a0c 0%, #201504 100%);
+  border: 2px solid rgba(253, 224, 71, 0.3);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+.login-admin-card:hover {
+  transform: translateY(-2px);
+  border-color: #fde047;
+}
+.login-admin-card.selected {
+  border-color: #fde047;
+  box-shadow: 0 0 16px rgba(253, 224, 71, 0.5);
+}
+.admin-avatar {
+  font-size: 1.8rem;
+}
+.admin-info {
+  flex: 1;
+  text-align: left;
+}
+.admin-title {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #fef08a;
+}
+.admin-sub {
+  font-size: 0.76rem;
+  color: var(--cream-dim);
+}
+.login-admin-card .login-select-btn {
+  width: auto;
+  margin-top: 0;
+  white-space: nowrap;
 }
 
 .user-pill--guest {

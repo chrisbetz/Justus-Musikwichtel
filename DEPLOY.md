@@ -104,7 +104,8 @@ The repository includes `garden.edn`:
 - Authorization mapping:
   - Garden ID **`quentin`** is authorized to control **Oboe** (`:player1`).
   - Garden ID **`kilian`** is authorized to control **Klavier** (`:player2`).
-  - Unauthenticated requests receive 401; unauthorized Garden IDs receive 403. Both can spectate the live scoreboard and village in read-only mode.
+  - Garden ID **`justus`** is the referee/admin authorized to **reset the clocks** (`POST /api/reset`).
+  - Unauthenticated requests to any clock-tampering functionality receive 401; unauthorized Garden IDs receive 403. Clocks remain viewable by everyone in read-only mode.
 
 ### Deploying
 1. Install the garden CLI (if not already installed):

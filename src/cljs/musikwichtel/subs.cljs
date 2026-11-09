@@ -96,6 +96,17 @@
          (= current-player (keyword player-key)))))
 
 (rf/reg-sub
+  ::admin?
+  (fn [db _]
+    (boolean (:admin? db))))
+
+(rf/reg-sub
+  ::can-reset?
+  :<- [::admin?]
+  (fn [admin? _]
+    admin?))
+
+(rf/reg-sub
   ::gauge-display-info
   (fn [_ _]
     [(rf/subscribe [::leader-info])

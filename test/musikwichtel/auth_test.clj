@@ -112,26 +112,46 @@
       (let [res (api/handle-stop storage "test" (assoc quentin-req :body {:player "player2"}))]
         (is (= 403 (:status res)))))))
 
+(deftest test-admin-check
+  (testing "justus is recognized as admin"
+    (is (true? (auth/admin? {:username "justus"})))
+    (is (true? (auth/admin? {:username "Justus"})))
+    (is (true? (auth/admin? {:username " JUSTUS "}))))
+
+  (testing "quentin, kilian, and others are not admin"
+    (is (false? (boolean (auth/admin? {:username "quentin"}))))
+    (is (false? (boolean (auth/admin? {:username "kilian"}))))
+    (is (false? (boolean (auth/admin? {:username "eve"}))))
+    (is (false? (boolean (auth/admin? nil))))))
+
 (deftest test-api-authorization-reset-and-name
   (let [storage (make-mock-storage)
+        justus-req  {:garden-user {:username "justus"}  :admin? true :current-player nil}
         quentin-req {:garden-user {:username "quentin"} :current-player :player1}
         kilian-req  {:garden-user {:username "kilian"}  :current-player :player2}
         eve-req     {:garden-user {:username "eve"}     :current-player nil}
         anon-req    {:garden-user nil                   :current-player nil}]
 
-    (testing "quentin can reset competition"
-      (let [res (api/handle-reset storage "test" quentin-req)]
-        (is (= 200 (:status res 200)))))
+    (testing "ONLY justus can reset competition"
+      (let [res (api/handle-reset storage "test" justus-req)]
+        (is (= 200 (:status res 200)))
+        (is (true? (:admin? (:body res))))))
 
-    (testing "kilian can reset competition"
+    (testing "quentin CANNOT reset competition -> 403"
+      (let [res (api/handle-reset storage "test" quentin-req)]
+        (is (= 403 (:status res)))
+        (is (= "forbidden_admin_only" (get-in res [:body :code])))))
+
+    (testing "kilian CANNOT reset competition -> 403"
       (let [res (api/handle-reset storage "test" kilian-req)]
-        (is (= 200 (:status res 200)))))
+        (is (= 403 (:status res)))
+        (is (= "forbidden_admin_only" (get-in res [:body :code])))))
 
     (testing "unauthenticated cannot reset -> 401"
       (let [res (api/handle-reset storage "test" anon-req)]
         (is (= 401 (:status res)))))
 
-    (testing "unauthorized user cannot reset -> 403"
+    (testing "unauthorized user eve cannot reset -> 403"
       (let [res (api/handle-reset storage "test" eve-req)]
         (is (= 403 (:status res)))))
 

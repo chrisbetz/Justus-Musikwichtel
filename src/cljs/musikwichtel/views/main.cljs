@@ -21,6 +21,8 @@
 (defn main-view []
   (let [current-user @(rf/subscribe [::subs/current-player])
         garden-user  @(rf/subscribe [::subs/garden-user])
+        admin?       @(rf/subscribe [::subs/admin?])
+        can-reset?   @(rf/subscribe [::subs/can-reset?])
         p1-data @(rf/subscribe [::subs/player :player1])
         p2-data @(rf/subscribe [::subs/player :player2])
         p1-name (or (:name p1-data) "Oboe")
@@ -44,6 +46,16 @@
       [:div.header-actions
        ;; Current User Login Indicator
        (cond
+         admin?
+         [:div.user-pill-container
+          [:div.user-pill.user-pill--admin
+           [:span.pill-icon "👑"]
+           [:span.pill-name "Justus (@justus · Admin)"]]
+          [:button.pill-switch-btn
+           {:on-click #(rf/dispatch [::events/open-login-modal])
+            :title "Garden ID Konto / Abmelden"}
+           "Konto 👤"]]
+
          current-user
          [:div.user-pill-container
           [:div.user-pill
@@ -83,8 +95,11 @@
 
        ;; Reset icon button
        [:button.reset-icon-btn
-        {:on-click #(rf/dispatch [::events/open-reset-modal])
-         :title "Stoppuhren zurücksetzen"
+        {:class (when can-reset? "reset-icon-btn--admin")
+         :on-click #(rf/dispatch [::events/open-reset-modal])
+         :title (if can-reset?
+                  "Stoppuhren zurücksetzen (@justus)"
+                  "Uhren zurücksetzen (Nur @justus)")
          :aria-label "Stoppuhren zurücksetzen"}
         [:span "⟳"]]]]
 
